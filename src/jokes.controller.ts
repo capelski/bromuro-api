@@ -3,6 +3,8 @@ import { Controller, Get, Res, Query, HttpStatus, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiTags, ApiParam } from '@nestjs/swagger';
 import { JokesService, Joke } from './jokes.service';
 
+// TODO Localize error messages
+
 @ApiTags('Jokes')
 @Controller('jokes')
 export class JokesController {

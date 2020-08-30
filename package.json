@@ -4,8 +4,8 @@
     "description": "Nestjs application providing jokes through a web Api",
     "main": "dist/main.js",
     "scripts": {
-        "build": "nest build",
-        "deploy": "gcloud app deploy",
+        "build": "rm -rf dist/ && nest build",
+        "deploy": "npm run build && gcloud app deploy",
         "prettier:fix": "prettier --write \"./src/**/*.{ts,tsx}\"",
         "start": "node dist/main.js",
         "start:dev": "nest start --watch"
