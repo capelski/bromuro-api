@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+    mongo:
+        image: 'mongo'
+        container_name: 'mongo'
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USER}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+        volumes:
+            - ./mongodb-volume:/data/db
+        ports:
+            - '27017:27017'
+        networks:
+            - bromuro
+
+    mongo-client:
+        image: 'mongoclient/mongoclient'
+        container_name: 'mongo-client'
+        depends_on:
+            - 'mongo'
+        ports:
+            - '3300:3000'
+        networks:
+            - bromuro
+
+volumes:
+    mongodb-volume:
+
+networks:
+    bromuro:
+        name: bromuro
