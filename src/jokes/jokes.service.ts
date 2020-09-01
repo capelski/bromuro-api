@@ -2,13 +2,9 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Db } from 'mongodb';
 import { databaseProviderName } from '../database/database.provider';
 import source from '../jokes.json';
+import { Joke } from './joke';
 
 // TODO Finish database repository implementation
-
-export interface Joke {
-    id: number;
-    text: string[];
-}
 
 const jokes: Joke[] = source.map((text, index) => ({
     id: index + 1,

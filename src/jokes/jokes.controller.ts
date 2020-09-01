@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { Controller, Get, Res, Query, HttpStatus, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiTags, ApiParam } from '@nestjs/swagger';
-import { JokesService, Joke } from './jokes.service';
+import { Joke } from './joke';
+import { JokesService } from './jokes.service';
 
 // TODO Localize error messages
 
