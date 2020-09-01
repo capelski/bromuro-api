@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { JokesModule } from './jokes.module';
+import { JokesModule } from './jokes/jokes.module';
 
 const PORT = process.env.PORT || 3000;
 

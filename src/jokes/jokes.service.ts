@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import source from './jokes.json';
+import { Injectable, Inject } from '@nestjs/common';
+import { Db } from 'mongodb';
+import { databaseProviderName } from '../database/database.provider';
+import source from '../jokes.json';
 
-// TODO Implement database repository
+// TODO Finish database repository implementation
 
 export interface Joke {
     id: number;
@@ -15,7 +17,9 @@ const jokes: Joke[] = source.map((text, index) => ({
 
 @Injectable()
 export class JokesService {
-    getJokeByIndex = (index: number) => jokes[index - 1];
+    constructor(@Inject(databaseProviderName) private readonly db: Db) {}
+
+    getJokeById = (id: number) => this.db.collection('jokes').findOne({ id });
 
     getMatchingJoke = (text: string, offset: number) => {
         const parsedText = this.parseSearchText(text);

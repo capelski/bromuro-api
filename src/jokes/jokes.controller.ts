@@ -136,13 +136,13 @@ export class JokesController {
                 message: 'You need to provide a numeric id'
             });
         } else {
-            const joke = this.jokesService.getJokeByIndex(jokeId);
-
-            if (joke) {
-                res.status(HttpStatus.OK).json(joke);
-            } else {
-                res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
-            }
+            this.jokesService.getJokeById(jokeId).then((joke) => {
+                if (joke) {
+                    res.status(HttpStatus.OK).json(joke);
+                } else {
+                    res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
+                }
+            });
         }
     }
 }
