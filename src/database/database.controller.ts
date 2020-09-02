@@ -1,9 +1,9 @@
 import { Controller, Inject, Post } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Db } from 'mongodb';
-import jokes from '../jokes.json';
 import { Joke } from '../jokes/joke';
 import { databaseProviderName } from './database.provider';
+import jokes from './jokes.json';
 
 @Controller('database')
 export class DatabaseController {

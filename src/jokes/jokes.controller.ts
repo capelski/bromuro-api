@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { Controller, Get, Res, Query, HttpStatus, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiQuery, ApiTags, ApiParam } from '@nestjs/swagger';
-import { Joke } from './joke';
 import { JokesService } from './jokes.service';
 
 // TODO Localize error messages
@@ -9,13 +8,7 @@ import { JokesService } from './jokes.service';
 @ApiTags('Jokes')
 @Controller('jokes')
 export class JokesController {
-    private readonly newestJoke: Joke;
-    private readonly oldestJoke: Joke;
-
-    constructor(private readonly jokesService: JokesService) {
-        this.newestJoke = jokesService.getNewestJoke();
-        this.oldestJoke = jokesService.getOldestJoke();
-    }
+    constructor(private readonly jokesService: JokesService) {}
 
     @Get('limits')
     @ApiOperation({
@@ -27,10 +20,15 @@ export class JokesController {
         description: 'The ids of the oldest and the newest joke'
     })
     getLimits() {
-        return {
-            oldest: this.oldestJoke.id,
-            newest: this.newestJoke.id
-        };
+        return Promise.all([
+            this.jokesService.getOldestJoke(),
+            this.jokesService.getNewestJoke()
+        ]).then(([oldestJoke, newestJoke]) => {
+            return {
+                oldest: oldestJoke!.id,
+                newest: newestJoke!.id
+            };
+        });
     }
 
     @Get('newest')
@@ -42,7 +40,7 @@ export class JokesController {
         description: 'The latest joke added to the application'
     })
     getNewestJoke() {
-        return this.newestJoke;
+        return this.jokesService.getNewestJoke();
     }
 
     @Get('oldest')
@@ -54,7 +52,7 @@ export class JokesController {
         description: 'The first joke that was ever added to the application'
     })
     getOldestJoke() {
-        return this.oldestJoke;
+        return this.jokesService.getOldestJoke();
     }
 
     @Get('match')
@@ -96,13 +94,13 @@ export class JokesController {
         } else {
             const text = String(query.text);
             const offset = parseInt(String(query.offset), 10) || 0;
-            const matchingJoke = this.jokesService.getMatchingJoke(text, offset);
-
-            if (matchingJoke) {
-                res.status(HttpStatus.OK).json(matchingJoke);
-            } else {
-                res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
-            }
+            this.jokesService.getMatchingJoke(text, offset).then((matchingJoke) => {
+                if (matchingJoke) {
+                    res.status(HttpStatus.OK).json(matchingJoke);
+                } else {
+                    res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
+                }
+            });
         }
     }
 
