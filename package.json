@@ -6,6 +6,7 @@
     "scripts": {
         "build": "rm -rf dist/ && nest build",
         "deploy": "npm run build && gcloud app deploy",
+        "docker:build": "npm run build && docker build -t l3bowski/bromuro-api:latest .",
         "prettier:fix": "prettier --write \"./src/**/*.{ts,tsx}\"",
         "start": "node dist/main.js",
         "start:dev": "nest start --watch"

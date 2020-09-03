@@ -1,6 +1,19 @@
 version: '3.5'
 
 services:
+    web-api:
+        image: l3bowski/bromuro-api:latest
+        environment:
+            PORT: 80
+            MONGODB_ROOT_USER: '${MONGODB_ROOT_USER}'
+            MONGODB_ROOT_PASSWORD: '${MONGODB_ROOT_PASSWORD}'
+            MONGODB_SERVER_ADDRESS: 'mongo'
+            MONGODB_SERVER_PORT: '${MONGODB_SERVER_PORT}'
+        depends_on:
+            - 'mongo'
+        ports:
+            - 80:80
+
     mongo:
         image: 'mongo'
         restart: always
@@ -10,7 +23,7 @@ services:
         volumes:
             - ./mongodb-volume:/data/db
         ports:
-            - '27017:27017'
+            - 27017:27017
 
     mongo-express:
         image: mongo-express
