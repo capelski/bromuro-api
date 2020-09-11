@@ -1,7 +1,20 @@
+import { Controller, Get, Res, Query, HttpStatus, Param, Post } from '@nestjs/common';
+import {
+    ApiOperation,
+    ApiResponse,
+    ApiQuery,
+    ApiTags,
+    ApiParam,
+    ApiExcludeEndpoint
+} from '@nestjs/swagger';
 import { Response } from 'express';
-import { Controller, Get, Res, Query, HttpStatus, Param } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiQuery, ApiTags, ApiParam } from '@nestjs/swagger';
+import { Joke } from './joke.entity';
 import { JokesService } from './jokes.service';
+
+const jokeToDto = (joke: Joke) => ({
+    id: joke.id,
+    text: joke.text.split('||')
+});
 
 @ApiTags('Jokes')
 @Controller('jokes')
@@ -38,7 +51,7 @@ export class JokesController {
         description: 'The latest joke added to the application'
     })
     getNewestJoke() {
-        return this.jokesService.getNewestJoke();
+        return this.jokesService.getNewestJoke().then((joke) => joke && jokeToDto(joke));
     }
 
     @Get('oldest')
@@ -50,7 +63,7 @@ export class JokesController {
         description: 'The first joke that was ever added to the application'
     })
     getOldestJoke() {
-        return this.jokesService.getOldestJoke();
+        return this.jokesService.getOldestJoke().then((joke) => joke && jokeToDto(joke));
     }
 
     @Get('match')
@@ -94,7 +107,7 @@ export class JokesController {
             const offset = parseInt(String(query.offset), 10) || 0;
             this.jokesService.getMatchingJoke(text, offset).then((matchingJoke) => {
                 if (matchingJoke) {
-                    res.status(HttpStatus.OK).json(matchingJoke);
+                    res.status(HttpStatus.OK).json(jokeToDto(matchingJoke));
                 } else {
                     res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
                 }
@@ -135,11 +148,19 @@ export class JokesController {
         } else {
             this.jokesService.getJokeById(jokeId).then((joke) => {
                 if (joke) {
-                    res.status(HttpStatus.OK).json(joke);
+                    res.status(HttpStatus.OK).json(jokeToDto(joke));
                 } else {
                     res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
                 }
             });
         }
+    }
+
+    @ApiExcludeEndpoint()
+    @Post('seed')
+    seedDatabase() {
+        return this.jokesService
+            .seedDatabase()
+            .then((insertedJokes) => `${insertedJokes.length} new jokes created!`);
     }
 }

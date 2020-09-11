@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { JokesModule } from './jokes/jokes.module';
+import { AppModule } from './app.module';
 
 const PORT = process.env.PORT || 3000;
 
-NestFactory.create(JokesModule)
+NestFactory.create(AppModule)
     .then((app) => {
         const options = new DocumentBuilder()
             .setTitle('Bromuro Api')

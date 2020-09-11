@@ -1,25 +1,62 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Db } from 'mongodb';
-import { databaseProviderName } from '../database/database.provider';
-import { Joke } from './joke';
+import { Repository, Like } from 'typeorm';
+import { jokesRepositoryName } from '../constants';
+import { Joke } from './joke.entity';
+import seedJokes from './jokes.json';
 
 @Injectable()
 export class JokesService {
-    constructor(@Inject(databaseProviderName) private readonly db: Db) {}
+    constructor(
+        @Inject(jokesRepositoryName)
+        private jokeRepository: Repository<Joke>
+    ) {}
 
-    getJokeById = (id: number) => this.db.collection<Joke>('jokes').findOne({ id });
+    getJokeById(id: number) {
+        return this.jokeRepository.findOne(id);
+    }
 
-    getMatchingJoke = (text: string, offset: number) =>
-        this.db.collection<Joke>('jokes').findOne<Joke>(
-            {
-                text: {
-                    $elemMatch: { $regex: `.*${text}.*`, $options: 'i' }
-                }
-            },
-            { sort: { id: 1 }, skip: offset }
-        );
+    getMatchingJoke(text: string, offset: number) {
+        return this.jokeRepository
+            .find({
+                where: { text: Like(`%${text}%`) },
+                order: {
+                    id: 'ASC'
+                },
+                skip: offset,
+                take: 1
+            })
+            .then((jokes) => {
+                console.log(jokes);
+                return jokes[0];
+            });
+    }
 
-    getNewestJoke = () => this.db.collection<Joke>('jokes').findOne<Joke>({}, { sort: { id: -1 } });
+    getNewestJoke() {
+        return this.jokeRepository.findOne({
+            order: {
+                id: 'DESC'
+            }
+        });
+    }
 
-    getOldestJoke = () => this.db.collection<Joke>('jokes').findOne<Joke>({}, { sort: { id: 1 } });
+    getOldestJoke() {
+        return this.jokeRepository.findOne({
+            order: {
+                id: 'ASC'
+            }
+        });
+    }
+
+    seedDatabase() {
+        return this.jokeRepository.find({ select: ['id'] }).then((dbJokes) => {
+            const dbJokesId = dbJokes.map((dbJoke) => dbJoke.id);
+            const nonExistingJokes = seedJokes
+                .map<Joke>((jokeText, jokeIndex) => ({
+                    id: jokeIndex + 1,
+                    text: jokeText.join('||')
+                }))
+                .filter((joke) => dbJokesId.indexOf(joke.id) === -1);
+            return Promise.all(nonExistingJokes.map((joke) => this.jokeRepository.insert(joke)));
+        });
+    }
 }
