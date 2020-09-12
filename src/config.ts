@@ -17,5 +17,5 @@ export const config = {
     MYSQL_SERVER_PORT:
         (process.env.MYSQL_SERVER_PORT && parseInt(process.env.MYSQL_SERVER_PORT)) || 3306,
     CLOUD_SQL_CONNECTION_NAME: process.env.CLOUD_SQL_CONNECTION_NAME,
-    DB_SOCKET_PATH: process.env.CLOUD_SQL_CONNECTION_NAME || '/cloudsql'
+    DB_SOCKET_PATH: process.env.DB_SOCKET_PATH || '/cloudsql'
 };
