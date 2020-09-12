@@ -1,19 +1,24 @@
 version: '3.5'
 
 services:
-    web-api:
-        build: ./
-        # TODO Serve directly from the source file
+    web-api-development:
+        build:
+            context: .
+            dockerfile: ./Dockerfile.development
+        image: bromuro-api-development
         environment:
-            PORT: 80
+            PORT: 3000
             MYSQL_USER: '${MYSQL_USER}'
             MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
             MYSQL_SERVER_ADDRESS: mysql
             MYSQL_SERVER_PORT: '${MYSQL_SERVER_PORT}'
+        restart: always
         depends_on:
             - mysql
+        volumes:
+            - ./src:/var/www/app/src
         ports:
-            - 80:80
+            - 3000:3000
 
     mysql:
         image: mysql
