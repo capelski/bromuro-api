@@ -90,7 +90,7 @@ export class JokesController {
                     });
                 } else {
                     res.status(HttpStatus.NOT_FOUND).json({
-                        message: `No hay ninguna broma donde salga "${text}"`
+                        message: `No hay bromas con "${text}"`
                     });
                 }
             });
