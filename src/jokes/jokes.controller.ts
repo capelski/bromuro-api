@@ -79,13 +79,19 @@ export class JokesController {
                 message: 'Text query string parameter must be provided'
             });
         } else {
-            const text = String(query.text);
-            const offset = parseInt(String(query.offset), 10) || 0;
+            const text = query.text;
+            const offset = parseInt(query.offset, 10) || 0;
             this.jokesService.getMatchingJoke(text, offset).then((matchingJoke) => {
                 if (matchingJoke) {
                     res.status(HttpStatus.OK).json(jokeToDto(matchingJoke));
+                } else if (offset) {
+                    res.status(HttpStatus.NOT_FOUND).json({
+                        message: `No hay más bromas con "${text}"`
+                    });
                 } else {
-                    res.status(HttpStatus.NOT_FOUND).json({ message: 'Esta broma no existe' });
+                    res.status(HttpStatus.NOT_FOUND).json({
+                        message: `No hay ninguna broma donde salga "${text}"`
+                    });
                 }
             });
         }
