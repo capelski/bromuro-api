@@ -4,6 +4,9 @@ import { jokesRepositoryName } from '../constants';
 import { Joke } from './joke.entity';
 import seedJokes from './jokes.json';
 
+// TODO Testing
+// https://stackoverflow.com/questions/55366037/inject-typeorm-repository-into-nestjs-service-for-mock-data-testing/55366343
+
 @Injectable()
 export class JokesService {
     constructor(
