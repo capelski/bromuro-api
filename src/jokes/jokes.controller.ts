@@ -42,30 +42,6 @@ export class JokesController {
         });
     }
 
-    @Get('newest')
-    @ApiOperation({
-        summary: 'Returns the latest joke added to the application'
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'The latest joke added to the application'
-    })
-    getNewestJoke() {
-        return this.jokesService.getNewestJoke().then((joke) => joke && jokeToDto(joke));
-    }
-
-    @Get('oldest')
-    @ApiOperation({
-        summary: 'Returns the first joke that was ever added to the application'
-    })
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'The first joke that was ever added to the application'
-    })
-    getOldestJoke() {
-        return this.jokesService.getOldestJoke().then((joke) => joke && jokeToDto(joke));
-    }
-
     @Get('match')
     @ApiQuery({
         name: 'text',
@@ -109,7 +85,7 @@ export class JokesController {
                 if (matchingJoke) {
                     res.status(HttpStatus.OK).json(jokeToDto(matchingJoke));
                 } else {
-                    res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
+                    res.status(HttpStatus.NOT_FOUND).json({ message: 'Esta broma no existe' });
                 }
             });
         }
@@ -150,7 +126,7 @@ export class JokesController {
                 if (joke) {
                     res.status(HttpStatus.OK).json(jokeToDto(joke));
                 } else {
-                    res.status(HttpStatus.NOT_FOUND).json({ message: 'There is no such joke' });
+                    res.status(HttpStatus.NOT_FOUND).json({ message: 'Esta broma no existe' });
                 }
             });
         }
